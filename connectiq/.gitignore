@@ -1,2 +1,4 @@
 /bin
 /build
+properties.mk
+.DS_Store
