@@ -54,6 +54,9 @@ module Transform {
     var compass_x;
     var compass_y;
     var compass_size;
+    var gps_signal_x;
+    var gps_signal_y;
+    var gps_signal_size;
 
     function setPixelDimensions(width, height) {
         pixelWidth = width;
@@ -68,6 +71,9 @@ module Transform {
         compass_size = 0.25*(scale_x2-scale_x1);
         compass_x = scale_x2 + 2*compass_size;
         compass_y = scale_y2 - compass_size;
+        gps_signal_size = (scale_x2-scale_x1) / 6;
+        gps_signal_x = scale_x1 - 2*gps_signal_size;
+        gps_signal_y = scale_y2 - 2*gps_signal_size;
     }
 
     // internal

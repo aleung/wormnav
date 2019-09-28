@@ -1,4 +1,5 @@
 using Toybox.WatchUi;
+using Toybox.Position;
 using Transform;
 using Trace;
 
@@ -13,6 +14,8 @@ class WormNavView extends WatchUi.View {
     var posCursor;
 
     var activity_values;
+
+    var gpsSignal = Position.QUALITY_NOT_AVAILABLE;
 
     function draw_bread_crumbs(dc) {
         dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
@@ -46,6 +49,28 @@ class WormNavView extends WatchUi.View {
         dc.drawText(Transform.pixelWidth2, Transform.scale_y2-dc.getFontHeight( Graphics.FONT_MEDIUM ),
             Graphics.FONT_MEDIUM , Transform.formatScale(Transform.refScale), Graphics.TEXT_JUSTIFY_CENTER);
 
+    }
+
+    function drawGpsSignal(dc) {
+        switch (gpsSignal) {
+            case Position.QUALITY_NOT_AVAILABLE:
+            case Position.QUALITY_LAST_KNOWN:
+                dc.setPenWidth(4);
+                dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
+                dc.drawCircle(Transform.gps_signal_x, Transform.gps_signal_y, Transform.gps_signal_size);
+                return;
+            case Position.QUALITY_POOR:
+                dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
+                break;
+            case Position.QUALITY_USABLE:
+                break;
+                dc.setColor(Graphics.COLOR_YELLOW, Graphics.COLOR_TRANSPARENT);
+                break;
+            case Position.QUALITY_GOOD:
+                dc.setColor(Graphics.COLOR_GREEN, Graphics.COLOR_TRANSPARENT);
+                break;
+        }
+        dc.fillCircle(Transform.gps_signal_x, Transform.gps_signal_y, Transform.gps_signal_size);
     }
 
 
@@ -243,11 +268,14 @@ class WormNavView extends WatchUi.View {
         }
 
         draw_scale(dc);
+
+        drawGpsSignal(dc);
     }
 
     function setPosition(info) {
         Transform.isTrackCentered = false;
         Transform.setPosition(info);
+        gpsSignal = info.accuracy;
         WatchUi.requestUpdate();
     }
 
