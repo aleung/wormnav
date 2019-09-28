@@ -4,13 +4,13 @@ using Trace;
 
 class WormNavView extends WatchUi.View {
 
+    private var trackRef = null;
+
     var screenShape;
 
     var cursorSizePixel;
 
     var posCursor;
-
-    var isNewTrack=false;
 
     var activity_values;
 
@@ -214,7 +214,7 @@ class WormNavView extends WatchUi.View {
     function onShow() {
         System.println("onShow()");
         View.onShow();
-        if(track==null) {
+        if($.track==null) {
             Transform.setZoomLevel(5);
         }
     }
@@ -222,16 +222,13 @@ class WormNavView extends WatchUi.View {
 
     // Update the view
     function onUpdate(dc) {
-        // Call the parent onUpdate function to redraw the layout
-        //View.onUpdate(dc);
+        if (trackRef != $.track) {
+            Transform.onTrackChange();
+            trackRef = $.track;
+        }
+
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
         dc.clear();
-
-        if(isNewTrack && track!=null) {
-            isNewTrack = false;
-            Trace.reset();
-            Transform.newTrack();
-        }
 
         if(track!=null) {
             draw_track(dc);

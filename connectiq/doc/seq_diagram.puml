@@ -1,0 +1,56 @@
+@startuml
+' autoactivate on
+
+actor user
+
+System -> WormNavApp : onStart
+participant WormNavView
+activate WormNavApp
+  create TrackModel
+  WormNavApp -> TrackModel : load from property
+return
+
+System -> WormNavApp : getInitialView
+activate WormNavApp
+  create WormNavView
+  WormNavApp -> WormNavView
+  activate WormNavView
+    WormNavView -> Trace : reset
+  deactivate WormNavView
+deactivate WormNavApp
+
+System -> WormNavView : onLayout
+activate WormNavView
+  WormNavView -> Transform : setPixelDimensions
+deactivate WormNavView
+
+System -> WormNavView : onShow
+
+System -> WormNavApp : onPosition
+activate WormNavApp
+  WormNavApp -> Trace : new_pos
+  Trace -> Transform : latlon_to_xy
+  WormNavApp -> WormNavView : setPosition
+  activate WormNavView
+    WormNavView -> Transform : setPosition
+    WormNavView -> System : requestUpdate
+  deactivate WormNavView
+return
+
+System -> WormNavView : onUpdate
+activate WormNavView
+  alt track was changed
+    WormNavView -> Transform : onTrackChange
+    activate Transform
+      Transform -> TrackModel : get data
+    deactivate Transform
+  end
+  WormNavView -> TrackModel : get data
+  WormNavView -> Trace : get data
+  WormNavView -> Transform : calculate pixels
+  WormNavView -> WormNavView : draw on DC
+return
+
+
+
+@enduml

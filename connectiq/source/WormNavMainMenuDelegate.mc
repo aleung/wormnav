@@ -11,8 +11,6 @@ class WormNavMainMenuDelegate extends WatchUi.MenuInputDelegate {
     function onMenuItem(item) {
         if (item == :delete) {
             if(track!=null) {
-                track=track.clean();
-                Transform.setViewCenter(Trace.lat_last_pos,Trace.lon_last_pos);
                 track=null;
                 Trace.reset();
             }

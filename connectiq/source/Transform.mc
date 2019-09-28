@@ -70,12 +70,13 @@ module Transform {
         compass_y = scale_y2 - compass_size;
     }
 
+    // internal
     function setViewCenter(lat, lon) {
         if(!centerMap) {
-            var ll = lon-track.lon_center;
-            var cos_lat = Math.cos(lat);
-            x_d = cos_lat*Math.sin(ll);
-            y_d = cos_lat_view_center*Math.sin(lat)-sin_lat_view_center*cos_lat*Math.cos(ll);
+            var xy = ll_2_xy(lat, lon);
+            x_d = xy[0];
+            y_d = xy[1];
+
             xs_center = pixelWidth2;
             if(northHeading || isTrackCentered) {
                 ys_center = pixelHeight2;
@@ -123,8 +124,11 @@ module Transform {
         sin_heading_smooth = 0.0;
     }
 
-    function newTrack() {
-        System.println("newTrack()");
+    function onTrackChange() {
+        System.println("onTrackChange()");
+        if (track == null) {
+            return;
+        }
         cos_lat_view_center = Math.cos(track.lat_center);
         sin_lat_view_center = Math.sin(track.lat_center);
         isTrackCentered = true;
@@ -149,14 +153,6 @@ module Transform {
         return [xs_center+scaleFactor*(x-x_d), ys_center-scaleFactor*(y-y_d)];
     }
 
-    function ll_2_screen(lat, lon) {
-        var ll = lon-track.lon_center;
-        var cos_lat = Math.cos(lat);
-        var x = cos_lat*Math.sin(ll);
-        var y = cos_lat_view_center*Math.sin(lat)-sin_lat_view_center*cos_lat*Math.cos(ll);
-        return xy_2_screen(x, y);
-    }
-
     function xy_2_rot_screen(x, y) {
         var xr = scaleFactor*(x-x_d);
         var yr = scaleFactor*(y-y_d);
@@ -165,8 +161,12 @@ module Transform {
     }
 
     function ll_2_xy(lat, lon) {
-        var ll = lon-track.lon_center;
+        var ll = lon - (track ? track.lon_center : 0);
         var cos_lat = Math.cos(lat);
+        if (cos_lat_view_center == null || sin_lat_view_center == null) {
+            cos_lat_view_center = Math.cos(lat);
+            sin_lat_view_center = Math.sin(lat);            
+        }
         return [cos_lat*Math.sin(ll), cos_lat_view_center*Math.sin(lat)-sin_lat_view_center*cos_lat*Math.cos(ll)];
     }
 

@@ -26,19 +26,6 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
         return true;
     }
 
-    function onKeyPressed(keyEvent) {
-        //System.println("onKeyPressed:" + keyEvent.getKey());
-        return false;
-    }
-
-    function onKeyReleased(keyEvent) {
-        //System.println("onKeyReleased:");
-        //mainView.setTextToDisplay(eventText);
-        //WatchUi.requestUpdate();
-        return false;
-    }
-
-
     function initialize() {
         BehaviorDelegate.initialize();
     }

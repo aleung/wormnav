@@ -3,8 +3,7 @@ using Toybox.WatchUi;
 using Toybox.Timer;
 using Toybox.Attention as Att;
 using Trace;
-
-var messageReceived = false;
+using Transform;
 
 var mailMethod;
 var phoneMethod;
@@ -35,11 +34,9 @@ class WormNavApp extends Application.AppBase {
         pageIndex=0;
 
         var data= Application.getApp().getProperty("trackData");
-
-        if(data!=null) {
+        if (data!=null) {
             System.println("load data from property store");
-            track = new TrackModel(data);
-            System.println("Created track from property store!");
+            $.track = new TrackModel(data);
         }
 
         if(Application.getApp().getProperty("northHeading")!=null) {
@@ -58,7 +55,6 @@ class WormNavApp extends Application.AppBase {
             Trace.breadCrumbDist = Application.getApp().getProperty("breadCrumbDist");
         }
 
-
         Position.enableLocationEvents(Position.LOCATION_CONTINUOUS, method(:onPosition));
 
         // timer is used for data fields and auto lap
@@ -74,9 +70,6 @@ class WormNavApp extends Application.AppBase {
     // Return the initial view of your application here
     function getInitialView() {
         mainView = new WormNavView();
-        if(track!= null) {
-             mainView.isNewTrack=true;
-        }
         viewDelegate = new WormNavDelegate();
         phoneMethod = method(:onPhone);
         if(Communications has :registerForPhoneAppMessages) {
@@ -89,26 +82,27 @@ class WormNavApp extends Application.AppBase {
 
     function onPhone(msg) {
         System.println("onPhone(msg)");
-        messageReceived = true;
         pageIndex=0;
-        track = new TrackModel(msg.data);
+        $.track = new TrackModel(msg.data);
         try {
             Application.getApp().setProperty("trackData", msg.data);
-            $.mainView.isNewTrack=true;
             WatchUi.requestUpdate();
         }
         catch( ex ) {
             System.println(ex.getErrorMessage());
-            track=null;
             System.exit();
         }
     }
 
     function onPosition(info) {
-        //onTimer();
-        Trace.new_pos(info.position.toRadians()[0],info.position.toRadians()[1]);
-        if($.pageIndex==0) {
-            $.mainView.setPosition(info);
+        try {
+            Trace.new_pos(info.position.toRadians()[0],info.position.toRadians()[1]);
+            if($.pageIndex==0) {
+                $.mainView.setPosition(info);
+            }
+        } catch(e) {
+            e.printStackTrace();
+            System.exit();
         }
     }
 

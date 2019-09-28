@@ -6,10 +6,10 @@ module Trace {
 
     var x_array = new [BUFFER_SIZE];
     var y_array = new [BUFFER_SIZE];
-    var pos_start_index;
-    var pos_nelements;
-    var cumDistance;
+    var pos_start_index = 0;
+    var pos_nelements = 0;
     var breadCrumbDist = 100;
+    var cumDistance = breadCrumbDist;
 
     var lat_last_pos;
     var lon_last_pos;
@@ -33,6 +33,7 @@ module Trace {
         lon_last_pos=null;
     }
 
+    // internal
     function put_pos(lat,lon) {
         var xy = Transform.ll_2_xy(lat,lon);
 

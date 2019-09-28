@@ -23,18 +23,4 @@ class TrackModel {
         nPoints = data[3];
         xyArray = data[4];
     }
-
-    function clean() {
-        data=null;
-        boundingBox=null;
-        lat_center =null;
-        lon_center = null;
-        diagonal=null;
-        name=null;
-        length=null;
-        nPoints=null;
-        xyArray=null;
-        return null;
-    }
-
 }
