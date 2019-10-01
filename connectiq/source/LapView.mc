@@ -4,7 +4,10 @@ using Toybox.Attention;
 
 class LapView extends WatchUi.View {
 
+    var showing = false;
+
     private var activity;
+    private var timer;
 
     function initialize(activityArg) {
         View.initialize();
@@ -12,7 +15,20 @@ class LapView extends WatchUi.View {
     }
 
     function onShow() {
-        new Timer.Timer().start(method(:attention), 1000, false);      
+        showing = true;
+        if (Attention has :vibrate) {
+            Attention.vibrate( [new Attention.VibeProfile(50, 500)] );
+        }
+        if (Attention has :playTone) {
+            Attention.playTone(Attention.TONE_LAP );
+        }
+        timer = new Timer.Timer();
+        timer.start(method(:dismiss), 6000, false);              
+    }
+
+    function onHide() {
+        showing = false;
+        timer.stop();
     }
 
     function onUpdate(dc) {
@@ -30,16 +46,6 @@ class LapView extends WatchUi.View {
     function dismiss() {
         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
     }
-
-    function attention() {
-        if (Attention has :vibrate) {
-            Attention.vibrate( [new Attention.VibeProfile(50, 500)] );
-        }
-        if (Attention has :playTone) {
-            Attention.playTone(Attention.TONE_LAP );
-        }
-        new Timer.Timer().start(method(:dismiss), 9000, false);      
-    }
 }
 
-// TODO: add Delegate
+// TODO: add its own Delegate, no response to START right now

@@ -1,5 +1,6 @@
 using Toybox.Activity;
 using Toybox.ActivityRecording;
+using Toybox.Lang;
 
 enum {
     ACTIVITY_NOT_START,
@@ -63,12 +64,13 @@ class WormNavActivity {
     function isAutolap() {
         var isLap = false;
 
-        if (getState() == ACTIVITY_RUNNING) {
+        if (getState() == ACTIVITY_RUNNING && autolapDistance > 0) {
             var elapsedDistance = Activity.getActivityInfo().elapsedDistance;
             var elapsedTime = Activity.getActivityInfo().elapsedTime;
             if ( elapsedTime != null && elapsedTime > 0 && elapsedDistance != null  && elapsedDistance > 0) {
                 elapsedLapTime = elapsedTime - lapInitTime;
                 elapsedLapDistance = elapsedDistance - lapInitDistance;
+                System.println("elapsedDistance:" + elapsedDistance + ", elapsedLapDistance:" + elapsedLapDistance);
 
                 if (elapsedLapDistance > autolapDistance) {
                     lapTime = elapsedLapTimeP + 
@@ -136,9 +138,8 @@ class WormNavActivity {
     }
 
     private function error(msg) {
-        System.println(msg);
         try {
-          throw new Exception();
+          throw new Lang.Exception(msg);
         } catch(e) {
           e.printStackTrace();
         }

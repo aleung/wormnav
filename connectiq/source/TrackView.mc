@@ -1,5 +1,6 @@
 using Toybox.WatchUi;
 using Toybox.Position;
+using Toybox.Timer;
 using Transform;
 using Trace;
 
@@ -9,11 +10,8 @@ class TrackView extends WatchUi.View {
     private var trackRef = null;
     private var show = false;
     private var gpsSignal = Position.QUALITY_NOT_AVAILABLE;
-
-
-    var screenShape;
-    var cursorSizePixel;
-    var posCursor;
+    private var cursorSizePixel;
+    private var timer;
 
     function initialize(activityArg) {
         System.println("TrackView.initialize()");
@@ -22,7 +20,7 @@ class TrackView extends WatchUi.View {
         Trace.reset();
     }
 
-    function draw_bread_crumbs(dc) {
+    private function draw_bread_crumbs(dc) {
         dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
         var xy_pos;
 
@@ -49,7 +47,7 @@ class TrackView extends WatchUi.View {
         dc.drawCircle(Transform.pixelWidth2, Transform.pixelHeight2, Transform.pixelWidth2);
     }
 
-    function draw_scale(dc) {
+    private function draw_scale(dc) {
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(2);
 
@@ -61,7 +59,7 @@ class TrackView extends WatchUi.View {
 
     }
 
-    function drawGpsSignal(dc) {
+    private function drawGpsSignal(dc) {
         switch (gpsSignal) {
             case Position.QUALITY_NOT_AVAILABLE:
             case Position.QUALITY_LAST_KNOWN:
@@ -84,10 +82,16 @@ class TrackView extends WatchUi.View {
     }
 
 
-    function draw_activity_info(dc) {
-        System.println("draw_activity_info");
+    private function draw_activity_info(dc) {
         var y = 0.5 * dc.getFontAscent(Graphics.FONT_MEDIUM);
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+
+        if (activity.getState() == ACTIVITY_NOT_START) {
+            dc.drawText(Transform.pixelWidth2, y, Graphics.FONT_MEDIUM, 
+                "Press START", Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+            return;
+        }
+
         if (Activity.getActivityInfo().elapsedDistance!= null) {
             var data = Activity.getActivityInfo().elapsedDistance/1000;
             var distance = "Dist.: " + data.format("%.2f");
@@ -101,7 +105,7 @@ class TrackView extends WatchUi.View {
     }
 
 
-    function draw_track(dc) {
+    private function draw_track(dc) {
         dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(2);
 
@@ -135,7 +139,7 @@ class TrackView extends WatchUi.View {
 
     }
 
-    function draw_trace(dc) {
+    private function draw_trace(dc) {
 
         dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(1);
@@ -215,24 +219,29 @@ class TrackView extends WatchUi.View {
 
     // Load your resources here
     function onLayout(dc) {
-        System.println("onLayout(dc)");
-        screenShape = System.getDeviceSettings().screenShape;
         Transform.setPixelDimensions(dc.getWidth(), dc.getHeight());
         cursorSizePixel=Transform.pixelWidth*Transform.SCALE_PIXEL*0.5;
     }
 
-    // Called when this View is brought to the foreground. Restore
-    // the state of this View and prepare it to be shown. This includes
-    // loading resources into memory.
+    function refresh() {
+        WatchUi.requestUpdate();
+    }
+
     function onShow() {
         System.println("onShow()");
         show = true;
         View.onShow();
+        timer = new Timer.Timer();
+        timer.start(method(:refresh), 1000, true);      
         if($.track==null) {
             Transform.setZoomLevel(5);
         }
     }
 
+    function onHide() {
+        timer.stop();
+        show = false;
+    }
 
     // Update the view
     function onUpdate(dc) {
@@ -256,18 +265,9 @@ class TrackView extends WatchUi.View {
             draw_trace(dc);
         }
 
-        if (activity.getState() != ACTIVITY_NOT_START) {
-            draw_activity_info(dc);
-        }
-
+        draw_activity_info(dc);
         draw_scale(dc);
-
         drawGpsSignal(dc);
-    }
-
-
-    function onHide() {
-        show = false;
     }
 
     function onPosition(info) {
@@ -275,7 +275,6 @@ class TrackView extends WatchUi.View {
             Transform.isTrackCentered = false;
             Transform.setPosition(info);
             gpsSignal = info.accuracy;
-            WatchUi.requestUpdate();                
         }
     }
 }

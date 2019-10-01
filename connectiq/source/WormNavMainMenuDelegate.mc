@@ -33,13 +33,13 @@ class WormNavMainMenuDelegate extends WatchUi.MenuInputDelegate {
         if (item == :autolap) {
             var autolapMenu = new Rez.Menus.AutolapMenu();
             autolapMenu.setTitle("Autolap <" + activity.getAutolapDistanceStr() + ">");
-            WatchUi.pushView(autolapMenu, new WormNavAutolapMenuDelegate(activity), WatchUi.SLIDE_UP);
+            WatchUi.pushView(autolapMenu, new WormNavAutolapMenuDelegate(activity), WatchUi.SLIDE_LEFT);
             return true;
         }
         if (item == :breadCrumbs) {
             var breadCrumbsMenu = new Rez.Menus.BreadCrumbsMenu();
             breadCrumbsMenu.setTitle("Bread crumbs <" + Trace.getBreadCrumbDistStr() + ">");
-            WatchUi.pushView(breadCrumbsMenu, new WormNavBreadCrumbsMenuDelegate(), WatchUi.SLIDE_UP);
+            WatchUi.pushView(breadCrumbsMenu, new WormNavBreadCrumbsMenuDelegate(), WatchUi.SLIDE_LEFT);
             return true;
         }
 

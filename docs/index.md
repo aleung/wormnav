@@ -55,7 +55,6 @@ Of course, other accessible locations can also be used.
 <div style="clear: both"/>
 
 
-
 ##### Track/Route Manager - Import
 <div style="float: left; width: 50%">
 <img src="images/android_route_manager_import.png" width="300"/>
@@ -69,7 +68,6 @@ Of course, other accessible locations can also be used.
 </div>
 {::options parse_block_html="true" /}
 <div style="clear: both"/>
-
 ##### Track/Route Manager - Show tracks/routes on map
 <div style="float: left; width: 50%">
 <img src="images/android_route_manager_route.png" width="300"/>
@@ -82,7 +80,6 @@ Of course, other accessible locations can also be used.
 </div>
 {::options parse_block_html="true" /}
 <div style="clear: both"/>
-
 ##### Route Manager - Optimize
 <div style="float: left; width: 50%">
 <img src="images/android_route_manager_optimize.png" width="300"/>
@@ -98,7 +95,6 @@ Of course, other accessible locations can also be used.
 </div>
 {::options parse_block_html="true" /}
 <div style="clear: both"/>
-
 ##### Device Browser
 <div style="float: left; width: 50%">
 <img src="images/android_device_browser_success.png" width="300"/>
@@ -112,7 +108,6 @@ Of course, other accessible locations can also be used.
 </div>
 {::options parse_block_html="true" /}
 <div style="clear: both"/>
-
 ##### Send to device dialog
 <div style="float: left; width: 50%">
 <img src="images/android_send_to_device_menu.png" width="300"/>
@@ -128,7 +123,6 @@ Of course, other accessible locations can also be used.
 </div>
 {::options parse_block_html="true" /}
 <div style="clear: both"/>
-
 ### Connect IQ app
 
 #### Key features and capabilities:
@@ -143,13 +137,14 @@ Of course, other accessible locations can also be used.
 #### Button usage
 <img src="images/garmin_description_export.png" width="1024"/>
 
-Vivoactive has a touch screen. All operations perform on touch screen rather then button.
-- tap: start/pause activity
-- long tap: menu
-- swipe up/down: zoom out/in
+Vivoactive has a touch screen and a single button. A lot of operations perform on touch screen.
+- Button: start/pause activity
+- Screen tap: switch data fields and map view
+- Screen long tap: menu
+- Swipe up/down: zoom out/in in map view
 - swipe right: 
   - switch data fields and map view (when activity started)
-  - Resume, save or discard activity (when activity paused)
+  - Save or discard activity (when activity paused)
   - Exit (when activit not started)
 
 #### Screens
@@ -171,7 +166,6 @@ Available menu items:
 </div>
 {::options parse_block_html="true" /}
 <div style="clear: both"/>
-
 ##### Map view (north map orientation)
 <div style="float: left; width: 50%">
 <img src="images/garmin_track_nav_standard_2.png" width="300"/>
@@ -189,7 +183,6 @@ Standard view of map/track when activity has started
 </div>
 {::options parse_block_html="true" /}
 <div style="clear: both"/>
-
 ##### Map view (heads-up)
 <div style="float: left; width: 50%">
 <img src="images/garmin_track_nav_heads_up.png" width="300"/>
@@ -204,7 +197,6 @@ Heads-up view of map/track
 </div>
 {::options parse_block_html="true" /}
 <div style="clear: both"/>
-
 ##### Map view (track centered)
 <div style="float: left; width: 50%">
 <img src="images/garmin_track_nav_centered_2.png" width="300"/>
@@ -220,7 +212,6 @@ Show track and current position with center of track as view center
 </div>
 {::options parse_block_html="true" /}
 <div style="clear: both"/>
-
 ##### Data page
 <div style="float: left; width: 50%">
 <img src="images/garmin_data_page_2.png" width="300"/>
@@ -236,4 +227,5 @@ Data page with 4 fixed data fields
 
 </div>
 {::options parse_block_html="true" /}
+
 <div style="clear: both"/>

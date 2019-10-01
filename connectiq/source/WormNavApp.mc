@@ -1,6 +1,5 @@
 using Toybox.Application;
 using Toybox.WatchUi;
-using Toybox.Timer;
 using Toybox.Position;
 using Trace;
 using Transform;
@@ -15,6 +14,7 @@ class WormNavApp extends Application.AppBase {
 
     var activity;
     var trackView;
+    var lapView;
 
     function initialize() {
         AppBase.initialize();
@@ -22,7 +22,7 @@ class WormNavApp extends Application.AppBase {
 
     // onStart() is called on application start up
     function onStart(state) {
-        System.println("App.onStart");
+        System.println("=== App.onStart ===");
 
         var data= Application.getApp().getProperty("trackData");
         if (data!=null) {
@@ -54,6 +54,7 @@ class WormNavApp extends Application.AppBase {
     function getInitialView() {
         activity = new WormNavActivity();
         trackView = new TrackView(activity);
+        lapView = new LapView(activity);
         var viewDelegate = new WormNavDelegate(activity, [trackView, new WormNavDataView(activity)]);
         var phoneMethod = method(:onPhone);
         if(Communications has :registerForPhoneAppMessages) {
@@ -80,7 +81,11 @@ class WormNavApp extends Application.AppBase {
             Trace.new_pos(info.position.toRadians()[0],info.position.toRadians()[1]);
             var activity = Application.getApp().activity;
             if (activity.isAutolap()) {
-                WatchUi.pushView(new LapView(activity), null, WatchUi.SLIDE_IMMEDIATE);
+                var lapView = Application.getApp().lapView;
+                if (lapView.showing) {  // in case it's moving very fast
+                    WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+                }
+                WatchUi.pushView(Application.getApp().lapView, null, WatchUi.SLIDE_IMMEDIATE);
             }
             Application.getApp().trackView.onPosition(info);
         } catch(e) {

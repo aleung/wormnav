@@ -131,7 +131,7 @@ module Transform {
     }
 
     function onTrackChange() {
-        System.println("onTrackChange()");
+        System.println("Transform.onTrackChange()");
         if (track == null) {
             return;
         }

@@ -40,6 +40,7 @@ class WormNavAutolapMenuDelegate extends WatchUi.MenuInputDelegate {
             default:
                 return false;
         }
+        WatchUi.popView(WatchUi.SLIDE_RIGHT); // jump over first level menu
         return true;
     }
 

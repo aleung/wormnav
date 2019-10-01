@@ -35,14 +35,15 @@ class WormNavBreadCrumbsMenuDelegate extends WatchUi.MenuInputDelegate {
                 setBreadCrumbs(5000);
                 break;
             default:
-                return;
+                return false;
         }
+        WatchUi.popView(WatchUi.SLIDE_RIGHT); // jump over first level menu
+        return true;
     }
 
     function setBreadCrumbs(distance) {
         Trace.breadCrumbDist = distance;
         Application.getApp().setProperty("breadCrumbDist", Trace.distance);
-        return true;
     }
 
 }

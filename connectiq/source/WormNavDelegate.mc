@@ -15,6 +15,22 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
         views = viewsArg;
     }
 
+    function onTap(clickEvent) {
+        System.println("onTap:" + clickEvent.getType());
+        toggleView();
+        return true;
+    }
+
+    // do not use onSelect() because we don't want to toggleStart when tap on touch screen
+    function onKey(keyEvent) {
+        System.println("onKey:" + keyEvent.getKey());
+        if (keyEvent.getKey() == WatchUi.KEY_ENTER) {
+            toggleStart();
+            return true;
+        }
+        return false;
+    }
+
     function onNextPage() {
         System.println("onNextPage()");
         if (currentView == 0) {
@@ -40,7 +56,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
                 activity.exit(false);
                 break;
             case ACTIVITY_PAUSE:
-                WatchUi.pushView(new Rez.Menus.SaveMenu(), new WormNavSaveMenuDelegate(activity), WatchUi.SLIDE_UP);
+                WatchUi.pushView(new Rez.Menus.SaveMenu(), new WormNavSaveMenuDelegate(activity), WatchUi.SLIDE_RIGHT);
                 break;
             case ACTIVITY_RUNNING:
                 toggleView();
@@ -65,16 +81,13 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
 
         menu.addItem(Rez.Strings.main_menu_label_5, :delete);
 
-        WatchUi.pushView(menu, new WormNavMainMenuDelegate(activity), WatchUi.SLIDE_IMMEDIATE);
+        WatchUi.pushView(menu, new WormNavMainMenuDelegate(activity), WatchUi.SLIDE_LEFT);
         return true;
     }
 
-
-    function onSelect() {
-        System.println("onSelect()");
+    private function toggleStart() {
         activity.toggleStart();
         WatchUi.requestUpdate();
-        return true;
     }
 
     private function toggleView() {
