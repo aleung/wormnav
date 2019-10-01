@@ -3,14 +3,13 @@
 
     <string id="prompt">Click the menu button</string>
 
-    <string id="main_menu_label_1">North map orientation</string>
-    <string id="main_menu_label_2">Auto lap</string>
-    <string id="main_menu_label_3">Bread crumbs</string>
-    <string id="main_menu_label_4">Center map</string>
+    <string id="main_menu_label_1">Map orient: </string>
+    <string id="main_menu_label_2">Auto lap: </string>
+    <string id="main_menu_label_3">Bread crumbs: </string>
+    <string id="main_menu_label_4">Center map: </string>
     <string id="main_menu_label_5">Delete track</string>
     
-
-    <string id="save_menu_label_1">Resume</string>
+    <string id="save_menu_title">Exit</string>
     <string id="save_menu_label_2">Save</string>
     <string id="save_menu_label_3">Discard</string>
 </strings>

@@ -1,0 +1,21 @@
+@startuml
+
+state MAIN_VIEW {
+  TrackView -> DataView : SWIPE_LEFT | KEY_LAP
+  DataView -> TrackView : SWIPE_RIGHT | KEY_LAP
+}
+
+MAIN_VIEW -up-> LapView : [lap]
+LapView -> MAIN_VIEW : timeout
+
+MAIN_VIEW -up-> ConfigMenu
+ConfigMenu -> MAIN_VIEW 
+
+MAIN_VIEW --> ExitMenu : [paused] KEY_LAP | SWIPE_RIGHT
+ExitMenu -> MAIN_VIEW : KEY_LAP
+ExitMenu -> [*] : select menu item
+
+MAIN_VIEW -> MAIN_VIEW : START / toggle run and pause
+MAIN_VIEW --> [*] : [not running] KEY_LAP | SWIPE_RIGHT
+
+@enduml

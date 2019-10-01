@@ -4,7 +4,7 @@
 actor user
 
 System -> WormNavApp : onStart
-participant WormNavView
+participant TrackView
 activate WormNavApp
   create TrackModel
   WormNavApp -> TrackModel : load from property
@@ -12,43 +12,47 @@ return
 
 System -> WormNavApp : getInitialView
 activate WormNavApp
-  create WormNavView
-  WormNavApp -> WormNavView
-  activate WormNavView
-    WormNavView -> Trace : reset
-  deactivate WormNavView
+  create TrackView
+  WormNavApp -> TrackView
+  activate TrackView
+    TrackView -> Trace : reset
+  deactivate TrackView
 deactivate WormNavApp
 
-System -> WormNavView : onLayout
-activate WormNavView
-  WormNavView -> Transform : setPixelDimensions
-deactivate WormNavView
+System -> TrackView : onLayout
+activate TrackView
+  TrackView -> Transform : setPixelDimensions
+deactivate TrackView
 
-System -> WormNavView : onShow
+System -> TrackView : onShow
 
 System -> WormNavApp : onPosition
 activate WormNavApp
   WormNavApp -> Trace : new_pos
   Trace -> Transform : latlon_to_xy
-  WormNavApp -> WormNavView : setPosition
-  activate WormNavView
-    WormNavView -> Transform : setPosition
-    WormNavView -> System : requestUpdate
-  deactivate WormNavView
+  alt one lap
+    create LapView
+    WormNavApp -> LapView
+  end
+  WormNavApp -> TrackView : onPosition
+  activate TrackView
+    TrackView -> Transform : setPosition
+    TrackView -> System : requestUpdate
+  deactivate TrackView
 return
 
-System -> WormNavView : onUpdate
-activate WormNavView
+System -> TrackView : onUpdate
+activate TrackView
   alt track was changed
-    WormNavView -> Transform : onTrackChange
+    TrackView -> Transform : onTrackChange
     activate Transform
       Transform -> TrackModel : get data
     deactivate Transform
   end
-  WormNavView -> TrackModel : get data
-  WormNavView -> Trace : get data
-  WormNavView -> Transform : calculate pixels
-  WormNavView -> WormNavView : draw on DC
+  TrackView -> TrackModel : get data
+  TrackView -> Trace : get data
+  TrackView -> Transform : calculate pixels
+  TrackView -> TrackView : draw on DC
 return
 
 

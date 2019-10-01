@@ -1,26 +1,17 @@
 using Toybox.WatchUi;
-using Toybox.System;
 
 class WormNavSaveMenuDelegate extends WatchUi.MenuInputDelegate {
 
-    function initialize() {
-        MenuInputDelegate.initialize();
-    }
+    private var activity;
 
+    function initialize(lapTrackerArg) {
+        MenuInputDelegate.initialize();
+        activity = lapTrackerArg;
+    }
+    
     function onMenuItem(item) {
-        if (item == :resume) {
-            session.start();
-            return true;
-        } else if (item == :save) {
-            session.save();
-            System.exit();
-            return true;
-        } else {
-            session.discard();
-            System.exit();
-            return true;
-        }
-        return false;
+        activity.exit(item == :save);
+        return true;
     }
 
 }

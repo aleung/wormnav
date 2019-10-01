@@ -3,19 +3,24 @@ using Toybox.Position;
 using Transform;
 using Trace;
 
-class WormNavView extends WatchUi.View {
+class TrackView extends WatchUi.View {
 
+    private var activity;
     private var trackRef = null;
+    private var show = false;
+    private var gpsSignal = Position.QUALITY_NOT_AVAILABLE;
+
 
     var screenShape;
-
     var cursorSizePixel;
-
     var posCursor;
 
-    var activity_values;
-
-    var gpsSignal = Position.QUALITY_NOT_AVAILABLE;
+    function initialize(activityArg) {
+        System.println("TrackView.initialize()");
+        View.initialize();
+        activity = activityArg;
+        Trace.reset();
+    }
 
     function draw_bread_crumbs(dc) {
         dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
@@ -38,6 +43,11 @@ class WormNavView extends WatchUi.View {
 
     }
 
+    private function drawPauseIndicator(dc) {
+        dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
+        dc.setPenWidth(15);
+        dc.drawCircle(Transform.pixelWidth2, Transform.pixelHeight2, Transform.pixelWidth2);
+    }
 
     function draw_scale(dc) {
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
@@ -75,40 +85,25 @@ class WormNavView extends WatchUi.View {
 
 
     function draw_activity_info(dc) {
-        var data;
+        System.println("draw_activity_info");
+        var y = 0.5 * dc.getFontAscent(Graphics.FONT_MEDIUM);
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-        if(session.isRecording() && Activity.getActivityInfo()!=null) {
-            if( Activity.getActivityInfo().elapsedDistance!= null) {
-               data = Activity.getActivityInfo().elapsedDistance/1000;
-               if(data == null) {
-                   activity_values[0] = "--";
-               }
-               else {
-                    activity_values[0] = "Dist.: " + data.format("%.2f");
-               }
-
-            }
-            if(Activity.getActivityInfo().elapsedTime!=null) {
-               data = Activity.getActivityInfo().timerTime;
-                if(data == null) {
-                    activity_values[1] = "--";
-                }
-                else {
-                    //activity_values[1] = "T: " + Utils.printTime(data);
-                     activity_values[1] = "Time: " + Utils.msToTime(data);
-                }
-            }
+        if (Activity.getActivityInfo().elapsedDistance!= null) {
+            var data = Activity.getActivityInfo().elapsedDistance/1000;
+            var distance = "Dist.: " + data.format("%.2f");
+            dc.drawText(Transform.pixelWidth2, y, Graphics.FONT_MEDIUM , distance, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
         }
-        var y = 0.5*dc.getFontAscent(Graphics.FONT_MEDIUM);
-        dc.drawText(Transform.pixelWidth2, y, Graphics.FONT_MEDIUM , activity_values[0], Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
-        dc.drawText(Transform.pixelWidth2, 3*y, Graphics.FONT_MEDIUM , activity_values[1], Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        if (Activity.getActivityInfo().elapsedTime!=null) {
+            var data = Activity.getActivityInfo().timerTime;
+            var time = "Time: " + Utils.msToTime(data);
+            dc.drawText(Transform.pixelWidth2, 3*y, Graphics.FONT_MEDIUM , time, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        }
     }
 
 
     function draw_track(dc) {
         dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(2);
-
 
         var xy_pos1;
         var xy_pos2;
@@ -117,17 +112,17 @@ class WormNavView extends WatchUi.View {
 
         var step = 2;
 
-       var i=0;
-       if(Transform.northHeading || Transform.centerMap || Transform.isTrackCentered) {
-           xy_pos1 = Transform.xy_2_screen(xya[i],xya[i+1]);
-           xy_pos2 = Transform.xy_2_screen(xya[i+step],xya[i+step+1]);
-       } else {
-           xy_pos1 = Transform.xy_2_rot_screen(xya[i],xya[i+1]);
-           xy_pos2 = Transform.xy_2_rot_screen(xya[i+step],xya[i+step+1]);
-       }
-       dc.drawLine(xy_pos1[0],xy_pos1[1],xy_pos2[0],xy_pos2[1]);
+        var i=0;
+        if(Transform.northHeading || Transform.centerMap || Transform.isTrackCentered) {
+            xy_pos1 = Transform.xy_2_screen(xya[i],xya[i+1]);
+            xy_pos2 = Transform.xy_2_screen(xya[i+step],xya[i+step+1]);
+        } else {
+            xy_pos1 = Transform.xy_2_rot_screen(xya[i],xya[i+1]);
+            xy_pos2 = Transform.xy_2_rot_screen(xya[i+step],xya[i+step+1]);
+        }
+        dc.drawLine(xy_pos1[0],xy_pos1[1],xy_pos2[0],xy_pos2[1]);
 
-       for(i = step; i < xya.size()-step-1; i+=step ) {
+        for(i = step; i < xya.size()-step-1; i+=step ) {
             xy_pos1 = xy_pos2;
             if(Transform.northHeading || Transform.centerMap || Transform.isTrackCentered) {
                 xy_pos2 = Transform.xy_2_screen(xya[i+step],xya[i+step+1]);
@@ -217,13 +212,6 @@ class WormNavView extends WatchUi.View {
         }
     }
 
-    function initialize() {
-        System.println("initialize()");
-        View.initialize();
-        Trace.reset();
-        activity_values = new[2];
-    }
-
 
     // Load your resources here
     function onLayout(dc) {
@@ -238,6 +226,7 @@ class WormNavView extends WatchUi.View {
     // loading resources into memory.
     function onShow() {
         System.println("onShow()");
+        show = true;
         View.onShow();
         if($.track==null) {
             Transform.setZoomLevel(5);
@@ -255,6 +244,10 @@ class WormNavView extends WatchUi.View {
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
         dc.clear();
 
+        if (activity.getState() != ACTIVITY_RUNNING) {
+            drawPauseIndicator(dc);
+        }
+
         if(track!=null) {
             draw_track(dc);
         }
@@ -263,7 +256,7 @@ class WormNavView extends WatchUi.View {
             draw_trace(dc);
         }
 
-        if(session!=null) {
+        if (activity.getState() != ACTIVITY_NOT_START) {
             draw_activity_info(dc);
         }
 
@@ -272,17 +265,17 @@ class WormNavView extends WatchUi.View {
         drawGpsSignal(dc);
     }
 
-    function setPosition(info) {
-        Transform.isTrackCentered = false;
-        Transform.setPosition(info);
-        gpsSignal = info.accuracy;
-        WatchUi.requestUpdate();
-    }
 
-    // Called when this View is removed from the screen. Save the
-    // state of this View here. This includes freeing resources from
-    // memory.
     function onHide() {
+        show = false;
     }
 
+    function onPosition(info) {
+        if (show) {
+            Transform.isTrackCentered = false;
+            Transform.setPosition(info);
+            gpsSignal = info.accuracy;
+            WatchUi.requestUpdate();                
+        }
+    }
 }

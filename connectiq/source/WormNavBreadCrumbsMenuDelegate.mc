@@ -41,7 +41,7 @@ class WormNavBreadCrumbsMenuDelegate extends WatchUi.MenuInputDelegate {
 
     function setBreadCrumbs(distance) {
         Trace.breadCrumbDist = distance;
-        Application.getApp().setProperty("breadCrumbDist", Trace.autolapDistance);
+        Application.getApp().setProperty("breadCrumbDist", Trace.distance);
         return true;
     }
 

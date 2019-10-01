@@ -1,0 +1,12 @@
+@startuml
+[*] --> NOT_START
+NOT_START --> RUNNING : start / createSession()
+NOT_START -> [*] : exit
+RUNNING : entry / session.start()
+RUNNING -> RUNNING : [lap] / session.addLap()
+RUNNING --> PAUSE : pause
+PAUSE -> RUNNING : resume
+PAUSE : entry / session.stop()
+PAUSE -> [*] : save / session.save()
+PAUSE -> [*] : discard / session.discard()
+@enduml

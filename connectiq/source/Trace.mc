@@ -4,6 +4,8 @@ module Trace {
 
     const BUFFER_SIZE = 10;
 
+    // public
+
     var x_array = new [BUFFER_SIZE];
     var y_array = new [BUFFER_SIZE];
     var pos_start_index = 0;
@@ -11,19 +13,10 @@ module Trace {
     var breadCrumbDist = 100;
     var cumDistance = breadCrumbDist;
 
+    // internal
+
     var lat_last_pos;
     var lon_last_pos;
-
-    var lapTime = 0;
-    var elapsedlapTimeP = 0;
-    var elapsedLapDistanceP = 0.0;
-    var elapsedlapTime = 0;
-    var elapsedLapDistance = 0.0;
-    var lapInitDistance = 0.0;
-    var lapInitTime = 0;
-    var lapCounter = 0;
-    var autolapDistance = 1000;
-    var lapPace = "";
 
     function reset() {
         pos_nelements = 0;
@@ -31,6 +24,16 @@ module Trace {
         cumDistance=breadCrumbDist;
         lat_last_pos=null;
         lon_last_pos=null;
+    }
+
+    function getBreadCrumbDistStr() {
+        if (breadCrumbDist == 0) {
+            return "off";
+        } else if (breadCrumbDist < 1000) {
+            return breadCrumbDist + "m";
+        } else {
+            return breadCrumbDist/1000 + "km";
+        }
     }
 
     // internal
@@ -62,36 +65,5 @@ module Trace {
             put_pos(lat_last_pos,lon_last_pos);
             cumDistance -=breadCrumbDist;
         }
-    }
-
-    function isAutolap() {
-        var isLap = false;
-        if(autolapDistance > 0 && $.session!=null && session.isRecording() && Activity.getActivityInfo()!=null) {
-
-            var elapsedDistance = Activity.getActivityInfo().elapsedDistance;
-            var elapsedTime = Activity.getActivityInfo().elapsedTime;
-            if ( elapsedTime != null && elapsedTime > 0 && elapsedDistance != null  && elapsedDistance > 0) {
-                elapsedlapTime = elapsedTime - lapInitTime;
-                elapsedLapDistance = elapsedDistance - lapInitDistance;
-                //System.println("AutoLap on Timer():" + elapsedDistance + "|" + elapsedLapDistance + "|" + lapInitDistance + "|" + autolapDistance);
-
-                var lapVel = 0;
-                if ( elapsedlapTime > 0 && elapsedLapDistance > 0 ) {
-                    lapVel = elapsedLapDistance.toDouble()/(elapsedlapTime.toDouble()/1000);
-                }
-
-                if(elapsedLapDistance > autolapDistance) {
-                    lapTime = elapsedlapTimeP + (autolapDistance - elapsedLapDistanceP)/(elapsedDistance - elapsedLapDistanceP)*(elapsedTime - elapsedlapTimeP);
-                    lapInitTime = lapInitTime + lapTime;
-                    lapInitDistance = lapInitDistance + autolapDistance;
-                    lapCounter++;
-                    isLap = true;
-                    session.addLap();
-                }
-                elapsedlapTimeP = elapsedlapTime;
-                elapsedLapDistanceP = elapsedLapDistance;
-            }
-        }
-        return isLap;
     }
 }

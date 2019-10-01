@@ -4,8 +4,11 @@ using Trace;
 
 class WormNavMainMenuDelegate extends WatchUi.MenuInputDelegate {
 
-    function initialize() {
+    private var activity;
+
+    function initialize(ActivityArg) {
         MenuInputDelegate.initialize();
+        activity = ActivityArg;
     }
 
     function onMenuItem(item) {
@@ -15,13 +18,11 @@ class WormNavMainMenuDelegate extends WatchUi.MenuInputDelegate {
                 Trace.reset();
             }
             return true;
-
         }
         if (item == :north) {
             Transform.northHeading = !Transform.northHeading;
             Application.getApp().setProperty("northHeading", Transform.northHeading);
             return true;
-
         }
         if (item == :center) {
             Transform.centerMap = !Transform.centerMap;
@@ -31,31 +32,13 @@ class WormNavMainMenuDelegate extends WatchUi.MenuInputDelegate {
         }
         if (item == :autolap) {
             var autolapMenu = new Rez.Menus.AutolapMenu();
-            var s = "off";
-            if(Trace.autolapDistance>0) {
-                if(Trace.autolapDistance<1000) {
-                    s = Trace.autolapDistance + "m";
-                }
-                else {
-                    s = Trace.autolapDistance/1000 + "km";
-                }
-            }
-            autolapMenu.setTitle("Autolap <" + s + ">");
-            WatchUi.pushView(autolapMenu, new WormNavAutolapMenuDelegate(), WatchUi.SLIDE_UP);
+            autolapMenu.setTitle("Autolap <" + activity.getAutolapDistanceStr() + ">");
+            WatchUi.pushView(autolapMenu, new WormNavAutolapMenuDelegate(activity), WatchUi.SLIDE_UP);
             return true;
         }
         if (item == :breadCrumbs) {
             var breadCrumbsMenu = new Rez.Menus.BreadCrumbsMenu();
-            var s = "off";
-            if(Trace.breadCrumbDist>0) {
-                if(Trace.breadCrumbDist<1000) {
-                    s = Trace.breadCrumbDist + "m";
-                }
-                else {
-                    s = Trace.breadCrumbDist/1000 + "km";
-                }
-            }
-            breadCrumbsMenu.setTitle("Bread crumbs <" + s + ">");
+            breadCrumbsMenu.setTitle("Bread crumbs <" + Trace.getBreadCrumbDistStr() + ">");
             WatchUi.pushView(breadCrumbsMenu, new WormNavBreadCrumbsMenuDelegate(), WatchUi.SLIDE_UP);
             return true;
         }

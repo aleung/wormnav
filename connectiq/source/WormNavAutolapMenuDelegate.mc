@@ -4,8 +4,11 @@ using Trace;
 
 class WormNavAutolapMenuDelegate extends WatchUi.MenuInputDelegate {
 
-    function initialize() {
+    private var activity;
+
+    function initialize(lapTrackerArg) {
         MenuInputDelegate.initialize();
+        activity = lapTrackerArg;
     }
 
     function onMenuItem(item) {
@@ -35,22 +38,13 @@ class WormNavAutolapMenuDelegate extends WatchUi.MenuInputDelegate {
                 setAutolap(5000);
                 break;
             default:
-                return;
+                return false;
         }
+        return true;
     }
 
-    function setAutolap(distance) {
-        Trace.autolapDistance = distance;
-        if(Trace.autolapDistance > 0 && $.session!=null && session.isRecording() && Activity.getActivityInfo()!=null) {
-            var elapsedDistance = Activity.getActivityInfo().elapsedDistance;
-            var elapsedTime = Activity.getActivityInfo().elapsedTime;
-            if ( elapsedTime != null && elapsedTime > 0 && elapsedDistance != null  && elapsedDistance > 0) {
-                Trace.lapInitTime = elapsedTime;
-                Trace.lapInitDistance = elapsedDistance;
-            }
-        }
-        Application.getApp().setProperty("autolapDistance", Trace.autolapDistance);
-        return true;
+    private function setAutolap(distance) {
+        activity.setAutoLapDistance(distance);
     }
 
 }
