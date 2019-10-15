@@ -1,6 +1,8 @@
 using Toybox.Activity;
 using Toybox.ActivityRecording;
 using Toybox.Lang;
+using Toybox.Attention;
+
 
 enum {
     ACTIVITY_NOT_START,
@@ -113,6 +115,7 @@ class WormNavActivity {
             default:
                 error("[Bug] Activity.toggleStart() in unknown state: " + state);
         }
+        vibrate();
     }
 
     function exit(saveSession) {
@@ -130,6 +133,12 @@ class WormNavActivity {
                 error("[Bug] Activity.exit() in invalid state: " + state);
         }
         System.exit();
+    }
+
+    private function vibrate() {
+        if (Attention has :vibrate) {
+            Attention.vibrate( [new Attention.VibeProfile(50, 1000)] );
+        }        
     }
 
     private function newState(s) {
