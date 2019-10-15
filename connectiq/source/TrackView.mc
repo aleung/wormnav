@@ -1,6 +1,7 @@
 using Toybox.WatchUi;
 using Toybox.Position;
 using Toybox.Timer;
+using Toybox.Graphics;
 using Transform;
 using Trace;
 
@@ -83,24 +84,25 @@ class TrackView extends WatchUi.View {
 
 
     private function draw_activity_info(dc) {
-        var y = 0.5 * dc.getFontAscent(Graphics.FONT_MEDIUM);
+        var yOffset = System.getDeviceSettings().screenShape == System.SCREEN_SHAPE_ROUND ? 15 : 0;
+        var y = 0.5 * Graphics.getFontAscent(Graphics.FONT_MEDIUM);
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
 
         if (activity.getState() == ACTIVITY_NOT_START) {
-            dc.drawText(Transform.pixelWidth2, y, Graphics.FONT_MEDIUM, 
+            dc.drawText(Transform.pixelWidth2, yOffset + 2*y, Graphics.FONT_MEDIUM, 
                 "Press START", Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
             return;
         }
 
         if (Activity.getActivityInfo().elapsedDistance!= null) {
             var data = Activity.getActivityInfo().elapsedDistance/1000;
-            var distance = "Dist.: " + data.format("%.2f");
-            dc.drawText(Transform.pixelWidth2, y, Graphics.FONT_MEDIUM , distance, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+            var distance = "Dist: " + data.format("%.2f");
+            dc.drawText(Transform.pixelWidth2, yOffset + y, Graphics.FONT_MEDIUM , distance, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
         }
         if (Activity.getActivityInfo().elapsedTime!=null) {
             var data = Activity.getActivityInfo().timerTime;
             var time = "Time: " + Utils.msToTime(data);
-            dc.drawText(Transform.pixelWidth2, 3*y, Graphics.FONT_MEDIUM , time, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+            dc.drawText(Transform.pixelWidth2, yOffset + 3*y, Graphics.FONT_MEDIUM , time, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
         }
     }
 
