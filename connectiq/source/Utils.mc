@@ -94,19 +94,7 @@ module Utils {
         return meters;
     }
 
-    // Print pace as min:sec
-    function printPace(pace) {
-        var paceStr;
-
-        if( pace != null && ( pace instanceof Toybox.Lang.Number || pace instanceof Toybox.Lang.Float ) ) {
-            paceStr=pace.format("%.2f");
-            return paceStr.substring(0,paceStr.find(".")) + ":" + paceStr.substring(paceStr.find(".")+1,paceStr.find(".")+3);
-        } else {
-            return "--";
-        }
-    }
-
-     // Print pace as min:sec
+    // Print time as hour:min:sec
     function printTime(timeInMillies) {
        var seconds = Math.floor((timeInMillies / 1000) % 60) ;
        var minutes = Math.floor(((timeInMillies / (1000*60)) % 60));
@@ -114,29 +102,4 @@ module Utils {
        return Lang.format("$1$:$2$:$3$", [hours, minutes.format("%02d"), seconds.format("%02d")]);
     }
 
-    // Convert from speed to pace (from m/s to min/km)
-    function speedToPace(speed) {
-        var seconds;
-
-        if( speed==0.0 ) {
-            return 0.0;
-        }
-
-        // Change from speed (m/s) to pace (min/km or min/mi)
-        // Check device settings to get unit settings
-        if( System.getDeviceSettings().paceUnits==System.UNIT_STATUTE ) {
-            speed=1/speed*1609.344/60;
-        } else {
-            speed=1/speed*1000/60;
-        }
-
-        // Change decimals from base 100 to base 60 (a pace of 5.5 should be 5 minutes and 30 seconds)
-        seconds=(speed-speed.toNumber())*60/100;
-        if( seconds >= 0.595 ) {
-            seconds=0;
-            speed++;
-        }
-
-        return speed.toNumber()+seconds;
-    }
 }

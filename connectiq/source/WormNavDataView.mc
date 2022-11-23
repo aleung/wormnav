@@ -72,7 +72,6 @@ class WormNavDataView extends  WatchUi.View {
             }
             if(Activity.getActivityInfo().averageSpeed!=null) {
                data[2] = Activity.getActivityInfo().averageSpeed;
-               //data[2]=Utils.speedToPace(data[2]);
                //data[2] = Utils.convertSpeedToPace(data[2]);
             }
             if(Activity.getActivityInfo().currentHeartRate!=null) {
@@ -85,11 +84,9 @@ class WormNavDataView extends  WatchUi.View {
         x = Transform.pixelWidth/4;
         drawField(dc, "Distance", data[0]!=null? data[0].format("%.2f") : null, x, y1);
         x = 3*Transform.pixelWidth/4;
-        StringUtil.utf8ArrayToString([0xC2,0xB0]);
-        //drawField(dc, avgChar + " Pace",Utils.printPace(data[2]) , x, y1);
         drawField(dc, avgChar + " Pace", data[2]!=null? Utils.convertSpeedToPace(data[2]) : null , x, y1);
         x = Transform.pixelWidth2;
-        drawField(dc, "Heart Rate", data[3]!=null? data[3] : null, x, y2);
+        drawField(dc, "Heart Rate", data[3], x, y2);
     }
 
     function drawField(dc, label, value, x, y) {
